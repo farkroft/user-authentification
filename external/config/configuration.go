@@ -25,7 +25,7 @@ func NewConfig(configPath string) *Config {
 	v.SetConfigType("yaml")
 	v.SetConfigName("application")
 	v.AddConfigPath(configPath)
-	v.AddConfigPath(constants.ENVCONFIGPATH)
+	v.AddConfigPath(constants.EnvConfigPath)
 	err := v.ReadInConfig()
 	if err != nil {
 		log.Println(err.Error())
