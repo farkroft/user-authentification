@@ -9,12 +9,12 @@ import (
 )
 
 func main() {
-	v := config.NewConfig(constants.ENVCONFIGFILE)
+	v := config.NewConfig(constants.EnvConfigFile)
 	r := gin.New()
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
-	r.Run(v.GetString(constants.ENVPORT))
+	r.Run(v.GetString(constants.EnvPort))
 }
