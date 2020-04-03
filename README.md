@@ -1,5 +1,7 @@
 # Auth Service
 
 clone this repo
-go mod vendor
-docker run -d -p 8080:8080 auth-service  
+docker-compose up
+
+see logs:
+docker logs -f -t <container-name>
