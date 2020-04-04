@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	uuid "github.com/satori/go.uuid"
@@ -11,11 +10,6 @@ import (
 	"gitlab.com/auth-service/external/config"
 	"gitlab.com/auth-service/external/constants"
 )
-
-// Repository repository
-type Repository interface {
-	NewDatabase(*config.Config) *Database
-}
 
 // Database struct
 type Database struct {
@@ -31,11 +25,7 @@ type Base struct {
 }
 
 func (base *Base) beforeCreate(scope *gorm.Scope) error {
-	uuid, err := uuid.NewV4()
-	if err != nil {
-		log.Printf("error when generate uuid %s", err.Error())
-		return err
-	}
+	uuid, _ := uuid.NewV4()
 	return scope.SetColumn("ID", uuid)
 }
 

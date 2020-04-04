@@ -1,8 +1,6 @@
 package config
 
 import (
-	"log"
-
 	"github.com/spf13/viper"
 	"gitlab.com/auth-service/external/constants"
 )
@@ -28,7 +26,7 @@ func NewConfig(configPath string) *Config {
 	v.AddConfigPath(constants.EnvConfigPath)
 	err := v.ReadInConfig()
 	if err != nil {
-		log.Println(err.Error())
+		panic(err) // don't change to log
 	}
 
 	return &Config{
