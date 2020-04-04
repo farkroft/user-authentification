@@ -8,7 +8,7 @@ COPY application.yaml /app
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o auth-service
 
 FROM alpine:latest
-RUN apk --no-cache add ca-certificates
+RUN apk --no-cache add ca-certificates tzdata
 COPY --from=builder /app /app
 EXPOSE 8080
 CMD ["/app/auth-service"]

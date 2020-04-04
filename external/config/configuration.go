@@ -1,16 +1,15 @@
 package config
 
 import (
-	"log"
-
 	"github.com/spf13/viper"
 	"gitlab.com/auth-service/external/constants"
 )
 
+var _ Repository = (*Config)(nil)
+
 // Repository repository
 type Repository interface {
-	NewConfig(string) *Config
-	GetString(string) string
+	GetString(str string) string
 }
 
 // Config return struct of viper
@@ -28,7 +27,7 @@ func NewConfig(configPath string) *Config {
 	v.AddConfigPath(constants.EnvConfigPath)
 	err := v.ReadInConfig()
 	if err != nil {
-		log.Println(err.Error())
+		panic(err) // don't change to log
 	}
 
 	return &Config{
@@ -36,8 +35,7 @@ func NewConfig(configPath string) *Config {
 	}
 }
 
-// GetString interface of
+// GetString return string from env var
 func (c *Config) GetString(str string) string {
-	res := c.conf.GetString(str)
-	return res
+	return c.conf.GetString(str)
 }
