@@ -13,5 +13,12 @@ func main() {
 	log.NewLogger()
 	v := config.NewConfig(constants.EnvConfigFile)
 	server.NewServer(v)
-	database.NewDatabase(v)
+	db := database.NewDatabase(v)
+
+	defer func() {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
 }
