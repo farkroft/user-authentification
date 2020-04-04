@@ -5,10 +5,11 @@ import (
 	"gitlab.com/auth-service/external/constants"
 )
 
+var _ Repository = (*Config)(nil)
+
 // Repository repository
 type Repository interface {
-	NewConfig(string) *Config
-	GetString(string) string
+	GetString(str string) string
 }
 
 // Config return struct of viper
@@ -34,8 +35,7 @@ func NewConfig(configPath string) *Config {
 	}
 }
 
-// GetString interface of
+// GetString return string from env var
 func (c *Config) GetString(str string) string {
-	res := c.conf.GetString(str)
-	return res
+	return c.conf.GetString(str)
 }
