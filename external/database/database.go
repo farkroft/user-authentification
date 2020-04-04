@@ -4,12 +4,19 @@ import (
 	"fmt"
 	"time"
 
-	uuid "github.com/satori/go.uuid"
+	uuid "github.com/farkroft/go.uuid"
 
 	"github.com/jinzhu/gorm"
 	"gitlab.com/auth-service/external/config"
 	"gitlab.com/auth-service/external/constants"
 )
+
+var _ Repository = (*Database)(nil)
+
+// Repository interface
+type Repository interface {
+	Close() error
+}
 
 // Database struct
 type Database struct {
@@ -25,7 +32,7 @@ type Base struct {
 }
 
 func (base *Base) beforeCreate(scope *gorm.Scope) error {
-	uuid, _ := uuid.NewV4()
+	uuid := uuid.NewV4()
 	return scope.SetColumn("ID", uuid)
 }
 
@@ -45,4 +52,10 @@ func NewDatabase(cfg *config.Config) *Database {
 	return &Database{
 		db: db,
 	}
+}
+
+// Close to close connection
+func (d *Database) Close() error {
+	err := d.db.Close()
+	return err
 }
