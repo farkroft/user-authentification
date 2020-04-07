@@ -1,6 +1,9 @@
 package log
 
 import (
+	"fmt"
+	"runtime"
+
 	"github.com/sirupsen/logrus"
 	"gitlab.com/auth-service/external/util"
 )
@@ -12,11 +15,10 @@ type WIBFormatter struct {
 
 // NewLogger format logrus
 func NewLogger() {
-	logrus.SetLevel(logrus.InfoLevel)
+	logrus.SetLevel(logrus.ErrorLevel)
 
 	switch logrus.GetLevel() {
 	case logrus.ErrorLevel:
-		logrus.SetReportCaller(true)
 		logrus.SetFormatter(WIBFormatter{&logrus.JSONFormatter{}})
 	case logrus.InfoLevel:
 		logrus.SetFormatter(WIBFormatter{&logrus.TextFormatter{FullTimestamp: true}})
@@ -32,8 +34,10 @@ func (w WIBFormatter) Format(e *logrus.Entry) ([]byte, error) {
 
 // Errorf error with format string
 func Errorf(str string, err error) {
-	s := str + " %s"
-	logrus.Errorf(s, err)
+	str = str + ": %s"
+	_, file, line, _ := runtime.Caller(1) // skip caller to one frame
+	message := fmt.Sprintf("%s, %s:%d", err, file, line)
+	logrus.Errorf(str, message)
 }
 
 // Infoln log info message
