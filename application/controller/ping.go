@@ -9,7 +9,7 @@ import (
 )
 
 // Ping controller
-func Ping(c *gin.Context) {
+func (ctl *Controller) Ping(c *gin.Context) {
 	log.Infoln("string")
 	c.JSON(http.StatusOK, gin.H{
 		"message": "pong",
