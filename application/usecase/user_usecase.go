@@ -85,7 +85,6 @@ func (u *UseCase) UserLogin(req request.UserRequest) (int, string, interface{}, 
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, userClaims)
-	fmt.Println()
 	tokenStr, err := token.SignedString([]byte(u.Cfg.GetString(constants.EnvJWTSecret)))
 	if err != nil {
 		log.Errorf("token decode", err)
