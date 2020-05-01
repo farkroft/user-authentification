@@ -1,14 +1,18 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/jinzhu/gorm"
+	"gitlab.com/auth-service/application/request"
 	"gitlab.com/auth-service/external/database"
 	"gitlab.com/auth-service/internal/model"
 )
 
 // UserRepository interface
 type UserRepository interface {
-	RegisterUser(model *model.User) error
+	RegisterUser(req request.UserRequest) (model.User, error)
+	GetUser(query request.UserRequest) (model.User, error)
 }
 
 // UserRepo struct
@@ -22,10 +26,33 @@ func NewUserRepository(db *database.Database) *UserRepo {
 }
 
 // RegisterUser record
-func (u *UserRepo) RegisterUser(m *model.User) error {
-	db := u.DB.Create(m)
-	if db.Error != nil {
-		return db.Error
+func (u *UserRepo) RegisterUser(req request.UserRequest) (model.User, error) {
+	user := model.User{
+		Username: req.Username,
+		Password: req.Password,
 	}
-	return nil
+	db := u.DB.Create(&user)
+	if db.Error != nil {
+		return user, db.Error
+	}
+	return user, nil
+}
+
+// GetUser get user
+func (u *UserRepo) GetUser(req request.UserRequest) (model.User, error) {
+	query := model.User{
+		Username: req.Username,
+	}
+
+	user := model.User{}
+	db := u.DB.Where(query).First(&user)
+	if db.Error != nil && !db.RecordNotFound() {
+		return user, db.Error
+	}
+
+	if db.RecordNotFound() {
+		return user, fmt.Errorf("record not found")
+	}
+
+	return user, nil
 }

@@ -30,7 +30,7 @@ func main() {
 		}
 	}()
 	userRepo := repository.NewUserRepository(db)
-	usecase := usecase.NewUsecase(userRepo)
+	usecase := usecase.NewUsecase(userRepo, v)
 	ctl := controller.NewController(usecase)
 	server.NewServer(v, ctl)
 }

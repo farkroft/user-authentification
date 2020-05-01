@@ -15,3 +15,12 @@ func WIBTimezone(t time.Time) time.Time {
 	tz, _ := time.Parse(time.RFC3339, strTime)
 	return tz
 }
+
+// IsErrorRecordNotFound return bool
+func IsErrorRecordNotFound(err error) bool {
+	if err.Error() == "record not found" {
+		return true
+	}
+
+	return false
+}

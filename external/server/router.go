@@ -9,4 +9,6 @@ import (
 func NewRouter(r *gin.Engine, ctl *controller.Controller) {
 	r.GET("/ping", ctl.Ping)
 	r.POST("/register", ctl.Register)
+	r.POST("/login", ctl.Login)
+	r.POST("/verify-auth", ctl.UserAuth)
 }

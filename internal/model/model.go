@@ -3,6 +3,8 @@ package model
 import (
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
+
 	uuid "github.com/farkroft/go.uuid"
 	"github.com/jinzhu/gorm"
 )
@@ -26,4 +28,11 @@ type User struct {
 	Base
 	Username string `json:"username" gorm:"type:varchar(50);unique"`
 	Password string `json:"password"`
+}
+
+// UserToken struct
+type UserToken struct {
+	UserID         uuid.UUID
+	Username       string
+	StandardClaims *jwt.StandardClaims
 }
