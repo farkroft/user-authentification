@@ -5,6 +5,9 @@ import (
 	"time"
 )
 
+// Now return current time using single variable for easy mock
+var Now = time.Now
+
 // WIBTimezone return time Jakarta timezone
 func WIBTimezone(t time.Time) time.Time {
 	loc, err := time.LoadLocation("Asia/Jakarta")

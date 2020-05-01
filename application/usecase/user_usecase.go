@@ -68,8 +68,8 @@ func (u *UseCase) UserLogin(req request.UserRequest) (int, string, interface{}, 
 		log.Errorf("get user", err)
 		return http.StatusInternalServerError, "get user", nil, err
 	}
-
-	expiredAt := time.Now().Add(time.Minute * constants.TwelveHoursInMinute).Unix()
+	now := util.WIBTimezone(util.Now())
+	expiredAt := now.Add(time.Minute * constants.TwelveHoursInMinute).Unix()
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
 		log.Errorf("hash pass", err)
