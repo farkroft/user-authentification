@@ -6,7 +6,7 @@ import (
 
 // Controller struct
 type Controller struct {
-	UserUseCase *usecase.UseCase
+	UserUseCase usecase.CaseRepo
 }
 
 // NewController func
