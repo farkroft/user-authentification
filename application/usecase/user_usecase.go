@@ -111,10 +111,32 @@ func (u *UseCase) UserAuthVerify(str string) (*jwt.Token, error) {
 		}
 		return []byte(u.Cfg.GetString(constants.EnvJWTSecret)), nil
 	})
+	claims := token.Claims.(jwt.MapClaims)
+	exp := extractClaims(claims)
+	isExpired := isTokenExpired(exp)
+	if isExpired {
+		err := fmt.Errorf("token expired")
+		return nil, err
+	}
 
 	if err != nil {
 		return nil, err
 	}
 
 	return token, nil
+}
+
+func extractClaims(claims jwt.MapClaims) int64 {
+	stdClaims := claims["StandardClaims"].(map[string]interface{})
+	exp := stdClaims["exp"].(float64)
+	return int64(exp)
+}
+
+func isTokenExpired(expiredAt int64) bool {
+	nowUnix := util.WIBTimezone(util.Now()).Unix()
+	if expiredAt < nowUnix {
+		return true
+	}
+
+	return false
 }
