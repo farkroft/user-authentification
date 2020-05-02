@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strings"
 
+	"gitlab.com/auth-service/external/util"
+
 	"gitlab.com/auth-service/application/presenter"
 
 	"github.com/gin-gonic/gin"
@@ -44,6 +46,10 @@ func (ctl *Controller) Login(c *gin.Context) {
 
 	httpCode, strErr, resp, err := ctl.UserUseCase.UserLogin(req)
 	if err != nil {
+		if util.IsErrorRecordNotFound(err) {
+			c.JSON(http.StatusOK, presenter.ErrorPresenter(strErr, err))
+			return
+		}
 		log.Errorf(strErr, err)
 		c.JSON(httpCode, presenter.ErrorPresenter(strErr, err))
 		return

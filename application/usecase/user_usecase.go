@@ -60,7 +60,7 @@ func (u *UseCase) UserLogin(req request.UserRequest) (int, string, interface{}, 
 	}
 
 	user, err := u.UserRepo.GetUser(req)
-	if err != nil && !util.IsErrorRecordNotFound(err) {
+	if err != nil {
 		if util.IsErrorRecordNotFound(err) {
 			return http.StatusNotFound, "user not found", nil, err
 		}
