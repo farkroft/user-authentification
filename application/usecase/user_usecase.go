@@ -44,7 +44,7 @@ func (u *UseCase) UserRegister(req request.UserRequest) (int, string, error) {
 		return http.StatusInternalServerError, "database", err
 	}
 
-	return http.StatusOK, "OK", nil
+	return http.StatusCreated, "OK", nil
 }
 
 // UserLogin usecase for user login
