@@ -45,7 +45,7 @@ func (u *UserRepo) GetUser(req request.UserRequest) (model.User, error) {
 	}
 
 	user := model.User{}
-	db := u.DB.Where(query).First(&user)
+	db := u.DB.Debug().Where(query).First(&user)
 	if db.Error != nil && !db.RecordNotFound() {
 		return user, db.Error
 	}

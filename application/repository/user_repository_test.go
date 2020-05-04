@@ -47,7 +47,40 @@ func TestRegisterUserRepositoryShouldSuccessAndReturnUserModel(t *testing.T) {
 	if err != nil {
 		t.Errorf("there were unfulfilled expectations %v", err)
 	}
-	assert.Equal(t, user.ID, id)
-	assert.Equal(t, user.Username, userReq.Username)
-	assert.Equal(t, user.Password, userReq.Password)
+
+	assert.Equal(t, id, user.ID)
+	assert.Equal(t, userReq.Username, user.Username)
+	assert.Equal(t, userReq.Password, user.Password)
+}
+
+func TestGetUserRepositoryShouldSuccessAndReturnUserModel(t *testing.T) {
+	db, sqlMocks, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("error when stub db connection %v", err)
+	}
+	dbMock, err := gorm.Open("postgres", db)
+	if err != nil {
+		t.Fatalf("error when mock postgres %v", err)
+	}
+	repo := repository.UserRepo{DB: dbMock}
+
+	userReq := request.UserRequest{
+		Username: "fajarar77@gmail.com",
+	}
+
+	expectedQuery := regexp.QuoteMeta("SELECT * FROM \"users\"  WHERE \"users\".\"deleted_at\" IS NULL AND ((\"users\".\"username\" = $1)) ORDER BY \"users\".\"id\" ASC LIMIT 1")
+	row := sqlmock.NewRows([]string{"username", "password"}).AddRow(userReq.Username, "password")
+	sqlMocks.ExpectQuery(expectedQuery).WithArgs(userReq.Username).WillReturnRows(row)
+
+	user, err := repo.GetUser(userReq)
+	if err != nil {
+		t.Errorf("repo return err %v", err)
+	}
+	err = sqlMocks.ExpectationsWereMet()
+	if err != nil {
+		t.Errorf("there were unfulfilled expectations %v", err)
+	}
+
+	assert.Equal(t, userReq.Username, user.Username)
+	assert.Equal(t, "password", user.Password)
 }
