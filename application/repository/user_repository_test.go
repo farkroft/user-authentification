@@ -1,10 +1,10 @@
 package repository_test
 
 import (
-	"log"
 	"regexp"
 	"testing"
-	"time"
+
+	"github.com/stretchr/testify/assert"
 
 	uuid "github.com/farkroft/go.uuid"
 
@@ -16,15 +16,15 @@ import (
 )
 
 func TestRegisterUserRepositoryShouldSuccessAndReturnUserModel(t *testing.T) {
-	db, sqlMocks, _ := sqlmock.New()
-	dbMock, _ := gorm.Open("postgres", db)
-	repo := repository.UserRepo{DB: dbMock}
-
-	var Now = func() time.Time {
-		str := "2002-10-02T10:00:00+07:00"
-		res, _ := time.Parse(time.RFC3339, str)
-		return res
+	db, sqlMocks, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("error when stub db connection %v", err)
 	}
+	dbMock, err := gorm.Open("postgres", db)
+	if err != nil {
+		t.Fatalf("error when mock postgres %v", err)
+	}
+	repo := repository.UserRepo{DB: dbMock}
 
 	userReq := request.UserRequest{
 		Username: "fajarar77@gmail.com",
@@ -32,16 +32,22 @@ func TestRegisterUserRepositoryShouldSuccessAndReturnUserModel(t *testing.T) {
 	}
 
 	id := uuid.NewV4()
+
 	sqlMocks.ExpectBegin()
 	expectedQuery := regexp.QuoteMeta("INSERT INTO \"users\" (\"id\",\"created_at\",\"updated_at\",\"deleted_at\",\"username\",\"password\") VALUES ($1,$2,$3,$4,$5,$6) RETURNING \"users\".\"id\"")
-	row := sqlmock.NewRows([]string{"id", "created_at", "updated_at", "deleted_at", "username", "password"}).AddRow(id, Now(), Now(), nil, userReq.Username, userReq.Password)
-	sqlMocks.ExpectQuery(expectedQuery).WithArgs(id, Now(), Now(), nil, userReq.Username, userReq.Password).WillReturnRows(row)
+	row := sqlmock.NewRows([]string{"id"}).AddRow(id.String())
+	sqlMocks.ExpectQuery(expectedQuery).WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), nil, userReq.Username, userReq.Password).WillReturnRows(row)
 	sqlMocks.ExpectCommit()
 
-	_, err := repo.RegisterUser(userReq)
+	user, err := repo.RegisterUser(userReq)
 	if err != nil {
-		log.Println("====REPO====")
-		log.Println(err)
+		t.Errorf("repo return err %v", err)
 	}
 	err = sqlMocks.ExpectationsWereMet()
+	if err != nil {
+		t.Errorf("there were unfulfilled expectations %v", err)
+	}
+	assert.Equal(t, user.ID, id)
+	assert.Equal(t, user.Username, userReq.Username)
+	assert.Equal(t, user.Password, userReq.Password)
 }
