@@ -2,7 +2,6 @@ image: golang:1.12
 
 before_script:
     - mkdir -p /go/src/gitlab.com/auth-service
-    # - export GOPATH=/go
 
 stages:
     - test
@@ -11,5 +10,5 @@ test:
     stage: test
     script:
         - cd /go/src/gitlab.com/auth-service
-        - make test
+        - go test ./... -cover
     
