@@ -1,12 +1,12 @@
 image: golang:1.12
 
-cache:
-    paths:
-      - /apt-cache
-      - /go/src/github.com
-      - /go/src/golang.org
-      - /go/src/google.golang.org
-      - /go/src/gopkg.in
+# cache:
+#     paths:
+#       - /apt-cache
+#       - /go/src/github.com
+#       - /go/src/golang.org
+#       - /go/src/google.golang.org
+#       - /go/src/gopkg.in
 
 before_script:
     - mkdir -p /go/src/gitlab.com/auth-service
