@@ -1,14 +1,17 @@
-image: golang:1.12
-
-before_script:
-    - mkdir -p /go/src/gitlab.com/auth-service
+image: docker:latest
+services:
+  - docker:dind
 
 stages:
-    - test
+  - testing
 
-test:
-    stage: test
-    script:
-        - cd /go/src/gitlab.com/auth-service
-        - go test ./... -cover
+unit-testing:
+  stage: testing
+  image: golang:1.12-alpine
+  script:
+    - apk update && apk add --no-cache git build-base
+    - export GO111MODULE=on
+    - go test -cover -v ./...
+  except:
+    - master
     
