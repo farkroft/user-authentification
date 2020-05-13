@@ -8,3 +8,6 @@ run:
 
 test:
 	go test ./... -cover
+
+copy-env:
+	cp -rf application.yaml.sample application.yaml
